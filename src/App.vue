@@ -28,4 +28,7 @@
     cursor: pointer;
     text-decoration: none;
   }
+  .child-page{
+    padding: 0 20px;
+  }
 </style>

@@ -1,15 +1,29 @@
 <template>
   <div>
-    <div v-for="nav in navs">
+    <div v-for="nav in navs.comp">
       <div class="block-title">{{nav.title}}</div>
       <div class="list">
         <ul>
           <li v-for="item in nav.list">
-            <router-link class="item-content item-link" :to="item.path">
+            <router-link class="item-content item-link" :to="item.path" :target="item.target">
               <div class="item-inner">
                 <div class="item-title">{{item.name}}</div>
               </div>
             </router-link>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div v-for="nav in navs.otherComp">
+      <div class="block-title">{{nav.title}}</div>
+      <div class="list">
+        <ul>
+          <li v-for="item in nav.list">
+            <a class="item-content item-link" :href="item.path" target="_blank">
+              <div class="item-inner">
+                <div class="item-title">{{item.name}}</div>
+              </div>
+            </a>
           </li>
         </ul>
       </div>

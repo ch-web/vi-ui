@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="child-page">
     <p>
       日期选择：
       <calendar ref="calendar" :zero="calendar1.zero" :value="calendar.value" :show="calendar.show"

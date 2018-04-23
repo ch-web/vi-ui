@@ -12,7 +12,7 @@ const route = [
     component: () => import('@/pages/index')
   }
 ]
-for(let nav of navConfig){
+for(let nav of navConfig.comp){
   for(let page of nav.list){
     route.push({
       name: page.name,
