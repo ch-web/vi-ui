@@ -1,4 +1,4 @@
-# vue-che
+# vi-ui
 
 > A Vue.js project
 
