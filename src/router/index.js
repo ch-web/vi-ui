@@ -1,25 +1,27 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
-const Index = () => import('@/pages/index')
-const Calendar = () => import('@/pages/calendar')
+import navConfig from '@/nav.config.js'
 
 Vue.use(Router)
 
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'Index',
-      component: Index
-    },
+// 路由配置
+const route = [
+  {
+    path: '/',
+    name: 'Index',
+    component: () => import('@/pages/index')
+  }
+]
+for(let nav of navConfig){
+  for(let page of nav.list){
+    route.push({
+      name: page.name,
+      path: page.path,
+      component: () => import(`@/pages${page.path}`)
+    })
+  }
+}
 
-    /*组件*/
-    // 日历组件
-    {
-      path: '/calendar',
-      name: 'Calendar',
-      component: Calendar
-    }
-  ]
+export default new Router({
+  routes: route
 })
