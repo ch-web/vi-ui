@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="page-content">
     <keep-alive>
       <router-view/>
     </keep-alive>
@@ -13,6 +13,9 @@
 </script>
 
 <style>
+  html{
+    height: 100%;
+  }
   body {
     margin: 0 auto;
     font-size: 14px;
@@ -28,7 +31,14 @@
     cursor: pointer;
     text-decoration: none;
   }
+  .page-content{
+    height: inherit;
+  }
+  .height-inherit{
+    height: inherit;
+  }
   .child-page{
     padding: 0 20px;
+    height: inherit;
   }
 </style>
