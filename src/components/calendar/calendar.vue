@@ -560,7 +560,7 @@
             // console.log("选中日期",begin,end)
             this.$emit('select', begin, end)
             // 关闭弹层，存在确定按钮的话手动关闭 cwj
-            if(!this.showBottomBtn){
+            if (!this.showBottomBtn) {
               this.hideCalendar();
             }
           }
@@ -580,7 +580,7 @@
           this.days[k1][k2].selected = !this.days[k1][k2].selected
           this.$emit('select', this.multiDays)
           // 关闭弹层，存在确定按钮的话手动关闭 cwj
-          if(!this.showBottomBtn){
+          if (!this.showBottomBtn) {
             this.hideCalendar();
           }
         } else {
@@ -600,7 +600,7 @@
           this.$emit('select', [this.year, this.zero ? this.zeroPad(this.month + 1) : this.month + 1, this.zero ? this.zeroPad(this.days[k1][k2].day) : this.days[k1][k2].day])
 
           // 关闭弹层，存在确定按钮的话手动关闭 cwj
-          if(!this.showBottomBtn){
+          if (!this.showBottomBtn) {
             this.hideCalendar();
           }
         }
@@ -616,13 +616,29 @@
         this.rangeBegin = [];
         this.rangeEnd = [];
       },
-      // 确定
+      // 确定 cwj
       confirm(){
         if (this.rangeBegin.length != 0) {
           this.rangeBegin[1] += 1;
           this.rangeEnd[1] += 1;
         }
-        this.$emit('confirm', this.rangeBegin, this.rangeEnd);
+        let begin = []
+        let end = []
+        if (this.zero) {
+          this.rangeBegin.forEach((v, k) => {
+//            if (k == 1) v = v + 1
+            begin.push(this.zeroPad(v))
+          })
+          this.rangeEnd.forEach((v, k) => {
+//            if (k == 1) v = v + 1
+            end.push(this.zeroPad(v))
+          })
+        } else {
+          begin = this.rangeBegin
+          end = this.rangeEnd
+        }
+
+        this.$emit('confirm', begin, end);
         // 关闭弹层
         this.hideCalendar();
       },
