@@ -4,20 +4,20 @@
  * 加载中
  */
 import load from '@/plugins/loading/loading.vue'
-let loading=null;
-let tmp=null;
+let loading = null;
+let tmp = null;
 export default {
-  install(Vue,options){
-    Vue.prototype.loading=(flag)=>{
+  install(Vue, options){
+    Vue.prototype.loading = (flag) => {
       let ele = document.getElementById("loading");
-      if(ele){
+      if (ele) {
         ele.remove();
       }
       tmp = Vue.extend(load);
       loading = new tmp();
       document.body.appendChild(loading.$mount().$el)
-      loading.show = flag?true:false;
-	  ele=null;
+      loading.show = flag ? true : false;
+      ele = null;
     }
   }
 }

@@ -13,6 +13,9 @@ export default {
         }, { // toast组件
           "path": "/toast",
           "name": "Toast"
+        }, { // loading组件
+          "path": "/loading",
+          "name": "Loading"
         },
       ]
     }
