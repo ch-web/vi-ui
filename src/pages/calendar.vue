@@ -2,14 +2,15 @@
   <div class="child-page">
     <p>
       日期选择：
-      <calendar ref="calendar" :zero="calendar1.zero" :value="calendar.value" :show="calendar.show"
+      <calendar ref="calendar" :zero="calendar1.zero" :value="calendar.value"
                 @select="calendar.select"></calendar>
       <input type="text" @click="showCalendar()" v-model="calendar.display" readonly>
     </p>
     <p>
       日期范围：
       <calendar ref="calendar1" :range="calendar1.range" :zero="calendar1.zero" :value="calendar1.value"
-                :show="calendar1.show" @confirm="calendar1.confirm" @showCalendar="calendar1.showCalendar"></calendar>
+                :optionalMonth="calendar1.optionalMonth" :optionalEnd="calendar1.optionalEnd"
+                @confirm="calendar1.confirm" @showCalendar="calendar1.showCalendar"></calendar>
       <input type="text" @click="showCalendar1()" v-model="calendar1.display" readonly>
     </p>
   </div>
@@ -37,6 +38,8 @@
           range: true,// 范围模式
           zero: true,// 小于10补零
           value: [], //默认日期
+          optionalMonth: 3, // 可选月份控制
+          optionalEnd: [], // 可选结束日期
           confirm: (begin, end) => { // 确定
             if (begin.length != 0 || end.length != 0) {
               this.calendar1.value = [begin, end];
@@ -55,6 +58,11 @@
     },
     components: {
       calendar
+    },
+    created(){
+      //获取今天日期
+      let now = new Date();
+      this.calendar.optionalEnd = [now.getFullYear(), now.getMonth()+1, now.getDate()]
     },
     methods: {
       showCalendar(){

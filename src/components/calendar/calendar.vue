@@ -1,3 +1,10 @@
+<!--
+功能扩展 cwj  原始代码地址：https://github.com/jinzhe/vue-calendar
+1. 内部引入遮罩层，隐藏显示通过控件来操作
+2. 新增确定、清空按钮操作
+3. 优化可选日期范围功能 2018/5/15
+4. 新增可选月份控制 暂只支持范围选择功能 根据第一次选的值来控制前后月数的可选范围 2018/5/15
+-->
 <template>
   <div class="calendar-dialog" v-show="show">
     <div class="calendar-dialog-mask" @click="hideCalendar"></div>
@@ -89,6 +96,11 @@
         type: Boolean,
         default: false
       },
+      // 范围模式
+      monthRange: {
+        type: Number,
+        default: 0
+      },
       // 默认日期
       value: {
         type: Array,
@@ -96,18 +108,25 @@
           return []
         }
       },
-      // 开始选择日期
-      begin: {
+      // 可选开始日期 最大值12 替换原有begin，begin参数转移到date cwj
+      optionalBegin: {
         type: Array,
         default: function () {
           return []
         }
       },
-      // 结束选择日期
-      end: {
+      // 可选结束日期 替换原有end, end参数转移到date cwj
+      optionalEnd: {
         type: Array,
         default: function () {
           return []
+        }
+      },
+      // 可选月份控制
+      optionalMonth: {
+        type: Number,
+        default: function () {
+          return 0
         }
       },
       // 是否小于10补零
@@ -195,6 +214,8 @@
         },
         rangeBegin: [],
         rangeEnd: [],
+        begin: [], // 可选开始日期 props转移过来 cwj
+        end: []    // 可选结束日期 props转移过来
       }
     },
     watch: {
@@ -206,6 +227,9 @@
       }
     },
     mounted() {
+      // 给可选日期复制
+      this.begin = this.optionalBegin;
+      this.end = this.optionalEnd;
       this.init()
     },
     methods: {
@@ -531,8 +555,22 @@
             this.rangeBegin = [this.year, this.month, this.days[k1][k2].day]
             this.rangeBeginTemp = this.rangeBegin
             this.rangeEnd = [this.year, this.month, this.days[k1][k2].day]
-            this.rangeEndTemp = 0
+            this.rangeEndTemp = 0;
 
+            // 可选月份控制
+            debugger
+            if (this.optionalMonth && typeof this.optionalMonth === 'number'
+              && this.optionalMonth % 1 === 0 && this.optionalMonth <= 12) {
+              let _date = JSON.stringify([this.rangeBegin[0], this.rangeBegin[1] + 1, this.rangeBegin[2]])
+              this.begin = this.beforeDateByMonth(JSON.parse(_date), this.optionalMonth)
+              this.end = this.afterDateByMonth(JSON.parse(_date), this.optionalMonth)
+              // 验证结束时间不能大于当天时间
+              let _now = new Date();
+              if((new Date(this.end.join('/'))).valueOf()> _now.valueOf()){
+                this.end = [_now.getFullYear(), _now.getMonth()+1, _now.getDate()]
+              }
+//              console.log(this.begin, this.end)
+            }
           } else {
             this.rangeEnd = [this.year, this.month, this.days[k1][k2].day]
             this.rangeEndTemp = 1
@@ -605,7 +643,7 @@
           }
         }
       },
-      // 清空选中 cwj
+      // 清空选中
       clearSelected(){
         // 清空选中
         this.days.forEach(v => {
@@ -615,8 +653,15 @@
         })
         this.rangeBegin = [];
         this.rangeEnd = [];
+        // 重置日期可选范围
+        this.begin = [];
+        if(this.end.length!==0){
+          let _now = new Date();
+          this.end = [_now.getFullYear(), _now.getMonth()+1, _now.getDate()]
+        }
+        this.render(this.year, this.month)
       },
-      // 确定 cwj
+      // 确定
       confirm(){
         if (this.rangeBegin.length != 0) {
           this.rangeBegin[1] += 1;
@@ -642,13 +687,13 @@
         // 关闭弹层
         this.hideCalendar();
       },
-      // 显示日期 cwj
+      // 显示日期
       showCalendar(){
         this.rangeEndTemp = 1;
         this.show = true;
         this.$emit('showCalendar')
       },
-      // 关闭日期 cwj
+      // 关闭日期
       hideCalendar(){
         this.show = false;
       },
@@ -691,6 +736,27 @@
       zeroPad(n){
         return String(n < 10 ? '0' + n : n)
       },
+
+      // 返回几个月前日期
+      beforeDateByMonth(curDate, mon){
+        if (curDate[1] > mon) {
+          curDate[1] -= mon
+        } else {
+          curDate[1] += (12 - mon)
+          curDate[0]--;
+        }
+        return curDate;
+      },
+      // 返回几个后前日期
+      afterDateByMonth(curDate, mon){
+        if (curDate[1] <= (12 - mon)) {
+          curDate[1] += mon
+        } else {
+          curDate[1] -= (12 - mon)
+          curDate[0]++;
+        }
+        return curDate;
+      }
     }
   }
 
@@ -704,7 +770,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    z-index: 1;
+    z-index: 99;
   }
 
   .calendar-dialog-mask {
