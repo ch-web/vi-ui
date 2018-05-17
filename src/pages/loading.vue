@@ -8,7 +8,7 @@
   import loading from "@/components/loading/loading.vue"
 
   export default {
-    name: 'Calendar',
+    name: 'Load',
     data () {
       return {}
     },

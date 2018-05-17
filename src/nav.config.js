@@ -16,6 +16,9 @@ export default {
         }, { // loading组件
           "path": "/loading",
           "name": "Loading"
+        },{ // 图片浏览组件
+          "path": "/photo-browser",
+          "name": "Photo-browser"
         },
       ]
     }
