@@ -1,2 +1,0 @@
-webpackJsonp([4],{"/31G":function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var s={render:function(){var t=this.$createElement,e=this._self._c||t;return e("div",{staticClass:"child-page"},[e("p",[e("button",{on:{click:this.showToast}},[this._v("打开toast")])])])},staticRenderFns:[]};var a=n("VU/8")({name:"Calendar",data:function(){return{}},methods:{showToast:function(){this.$toast("带自动关闭的toast")}}},s,!1,function(t){n("MTVp")},null,null);e.default=a.exports},MTVp:function(t,e){}});
-//# sourceMappingURL=4.c982e0011f83c700c88f.js.map
