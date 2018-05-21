@@ -4,8 +4,6 @@
     <div>
       <photo-browser ref="photoBrowser1"></photo-browser>
     </div>
-
-
   </div>
 </template>
 <script>

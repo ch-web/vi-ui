@@ -52,6 +52,13 @@ var photoBrowser = function (swiper) {
         target[i].addEventListener(pb.params.touchEvents.start, pb.onSlideTouchStart);
         target[i].addEventListener(pb.params.touchEvents.move, pb.onSlideTouchMove);
         target[i].addEventListener(pb.params.touchEvents.end, pb.onSlideTouchEnd);
+
+        target[i].addEventListener('ondblclick', pb.toggleZoom);
+
+
+        // target[i].addEventListener('pointerdown', pb.onSlideTouchStart);
+        // target[i].addEventListener('pointermove', pb.onSlideTouchMove);
+        // target[i].addEventListener('pointerend', pb.onSlideTouchEnd);
       }
     }
   };

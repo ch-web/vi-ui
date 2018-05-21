@@ -10,7 +10,7 @@ Vue.use(toast);
 Vue.config.productionTip = false
 
 new Vue({
-  el: '#app',
+  el: '#apprr',
   router,
   components: { App },
   template: '<App/>'

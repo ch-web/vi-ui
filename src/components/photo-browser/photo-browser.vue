@@ -2,7 +2,7 @@
   <div class="photo-browser">
     <div class="photo-view">
       <div class="photo-nav">
-        <div class="photo-nav-item text-align-l" >
+        <div class="photo-nav-item text-align-l">
           <span @click="close">关闭</span></div>
       </div>
       <div class="page">
@@ -37,25 +37,22 @@
           {id: 2, url: bb},
           {id: 3, url: cc},
           {id: 4, url: dd}
-          ],
+        ],
         swiperOption: {
-          pagination: {
-            el: '.swiper-pagination',
-            type: 'fraction'
+          pagination: '.swiper-pagination',
+          paginationType: 'fraction',
+          onDoubleTap: i => {
+            var _this = this;
+            _this.psb.toggleZoom(i);
           },
-          on: {
-            doubleTap: i => {
-              var _this = this;
-              _this.psb.toggleZoom(i);
-            },
-            transitionEnd: i => {
-              var _this = this;
-              if (_this && _this.psb) {
-                _this.psb.onSliderTransitionEnd();
-              }
+          onTransitionEnd: i => {
+            var _this = this;
+            if (_this && _this.psb) {
+              _this.psb.onSliderTransitionEnd();
             }
           },
-          activeIndex:0
+          activeIndex: 0,
+          loop: false,
         }
       }
     },
@@ -99,6 +96,7 @@
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
   }
+
   .photo-view {
     position: relative;
     width: 100%;
@@ -228,9 +226,9 @@
     position: absolute;
     top: 0;
     left: 0;
-    height:34px;
-    padding-top:10px;
-    background-color: rgba(30,30,30,.8);
+    height: 34px;
+    padding-top: 10px;
+    background-color: rgba(30, 30, 30, .8);
   }
 
 </style>

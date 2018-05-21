@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="page-content">
+  <div id="appss" class="page-content">
     <keep-alive>
       <router-view/>
     </keep-alive>
