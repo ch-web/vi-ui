@@ -29,6 +29,8 @@
   import bb from "@/assets/photo-browser/bb.jpg";
   import cc from "@/assets/photo-browser/cc.jpg";
   import dd from "@/assets/photo-browser/dd.jpg";
+  import kk from "@/assets/photo-browser/kk.jpg";
+  import uu from "@/assets/photo-browser/uu.jpg";
   export default{
     data(){
       return {
@@ -36,7 +38,9 @@
         slides: [{id: 1, url: aa},
           {id: 2, url: bb},
           {id: 3, url: cc},
-          {id: 4, url: dd}
+          {id: 4, url: kk},
+          {id: 5, url: uu},
+          {id: 6, url: dd}
         ],
         swiperOption: {
           pagination: '.swiper-pagination',
