@@ -9,7 +9,7 @@
         <div class="swiper appszx-swiper">
           <swiper :options="swiperOption" ref="mySwiper">
             <swiper-slide v-for="items in slides" :key="items.id">
-              <span class="photo-browser-zoom-container">
+              <span class="swiper-zoom-container">
               <img :src="items.url"/>
               </span>
             </swiper-slide>
@@ -22,7 +22,6 @@
 
 </template>
 <script>
-  import photoBrowser from './photo-browser.js'
   import 'swiper/dist/css/swiper.css'
   import {swiper, swiperSlide} from 'vue-awesome-swiper'
   import aa from "@/assets/photo-browser/aa.jpg";
@@ -43,20 +42,11 @@
           {id: 6, url: dd}
         ],
         swiperOption: {
-          pagination: '.swiper-pagination',
-          paginationType: 'fraction',
-          onDoubleTap: i => {
-            var _this = this;
-            _this.psb.toggleZoom(i);
+          pagination: {
+              el:'.swiper-pagination',
+              type:'fraction'
           },
-          onTransitionEnd: i => {
-            var _this = this;
-            if (_this && _this.psb) {
-              _this.psb.onSliderTransitionEnd();
-            }
-          },
-          activeIndex: 0,
-          loop: false,
+          zoom:true
         }
       }
     },
@@ -65,12 +55,6 @@
       close(){
         this.$router.back(-1);
       },
-      //初始化zoom事件
-      zoomEvent(){
-        this.$nextTick(function () {
-          this.psb = new photoBrowser(this.swiper);
-        })
-      }
     },
     components: {
       swiper,
@@ -82,7 +66,6 @@
       }
     },
     mounted() {
-      this.zoomEvent();
     }
   }
 </script>
@@ -234,6 +217,5 @@
     padding-top: 10px;
     background-color: rgba(30, 30, 30, .8);
   }
-
 </style>
 
