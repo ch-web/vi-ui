@@ -13,6 +13,13 @@
                 @confirm="calendar1.confirm" @showCalendar="calendar1.showCalendar"></calendar>
       <input type="text" @click="showCalendar1()" v-model="calendar1.display" readonly>
     </p>
+    <p>
+      日期时间
+      <calendar ref="calendarTime" :optionalBegin="calendarStart.optionalBegin" :zero="calendarStart.zero"
+                :showTime="calendarStart.showTime" :value="calendarStart.value"
+                @selectTime="calendarStart.select" @initDate="initEndDate"></calendar>
+      <input type="text" @click="showCalendarTime()" v-model="calendarStart.display" readonly>
+    </p>
   </div>
 </template>
 
@@ -53,7 +60,21 @@
             if (!this.calendar1.display) return;
             this.calendar1.value = [this.calendar1.value[0], this.calendar1.value[1]];
           }
-        }
+        },
+        // 日期时间选择
+        calendarStart: {
+          display: '',
+          optionalBegin: [],
+          zero: true,// 小于10补零
+          value: [], //默认日期
+          time: [],
+          showTime: true,//显示时间
+          select: (value) => {
+            this.calendarStart.value = value.date;
+            this.calendarStart.time = value.time;
+            this.calendarStart.display = value.date.join('-') + ' ' + value.time.join(':');
+          }
+        },
       }
     },
     components: {
@@ -62,7 +83,7 @@
     created(){
       //获取今天日期
       let now = new Date();
-      this.calendar.optionalEnd = [now.getFullYear(), now.getMonth()+1, now.getDate()]
+      this.calendar.optionalEnd = [now.getFullYear(), now.getMonth() + 1, now.getDate()]
     },
     methods: {
       showCalendar(){
@@ -70,7 +91,14 @@
       },
       showCalendar1(){
         this.$refs.calendar1.showCalendar();
-      }
+      },
+      showCalendarTime(){
+        this.$refs.calendarTime.showCalendar();
+      },
+      //初始化结束日期(如果不初始化，选择日期后不选择时间就关闭，第二次进来日期不对）
+      initEndDate(value){
+        this.calendarStart.value = value;
+      },
     }
   }
 </script>

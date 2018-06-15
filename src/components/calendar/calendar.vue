@@ -4,6 +4,7 @@
 2. 新增确定、清空按钮操作
 3. 优化可选日期范围功能 2018/5/15
 4. 新增可选月份控制 暂只支持范围选择功能 根据第一次选的值来控制前后月数的可选范围 2018/5/15
+5:新增时间选择，只支持单选，设置showTime为true可选择时间，可选择时，分。使用时间选择时必须初始化日期，不然会出现第二次点击时日期不对,2018-06-15 chang.yan
 -->
 <template>
   <div class="calendar-dialog" v-show="show">
@@ -76,6 +77,39 @@
           <!--<input type="button" @click="hideCalendar" value="取消">-->
           <input type="button" class="clear" @click="clearSelected" value="清空">
           <input type="button" class="confirm" @click="confirm" value="确定">
+        </div>
+      </div>
+      <div class="calendar calendar-time" v-if="isOpenTime">
+        <div class="dis-flex justify-content-center height-40 line-height-40">
+          <div class="time-item">
+            时
+          </div>
+          <div class="time-item">
+            分
+          </div>
+        </div>
+        <div class="time-content dis-flex justify-content-center">
+          <div class="time-item" id="timeHours">
+            <div>
+              <div v-for="item in hours" :class="{'select-time':curHour==item}" @click="selectTime(1,item)">{{item}}
+              </div>
+            </div>
+          </div>
+          <div class="time-item" id="timeMinut">
+            <div>
+              <div v-for="item in munit" :class="{'select-time':curMunit==item}" @click="selectTime(2,item)">{{item}}
+              </div>
+            </div>
+          </div>
+          <!--<div class="time-item">
+            <div>
+              <div v-for="item in mis" :class="{'select-time':curMis==item}" @click="selectTime(3,item)">{{item}}</div>
+            </div>
+          </div>-->
+        </div>
+        <div class="time-btn">
+          <span class="float-right time-sure" @click="confirmTime">确定</span>
+          <span class="float-right time-cancle" @click="isOpenTime=false">返回</span>
         </div>
       </div>
     </div>
@@ -167,9 +201,22 @@
           return {}
         }
       },
+      //显示时间
+      showTime: {
+        type: Boolean,
+        default: false
+      },
+      //默认时间
+      time: {
+        type: Array,
+        default: function () {
+          return []
+        }
+      }
     },
     data() {
       return {
+        isOpenTime: false,//显示时间
         show: false, // 显示组件 cwj
         showBottomBtn: false, // 显示底部操作按钮 cwj
         years: [],
@@ -215,7 +262,10 @@
         rangeBegin: [],
         rangeEnd: [],
         begin: [], // 可选开始日期 props转移过来 cwj
-        end: []    // 可选结束日期 props转移过来
+        end: [],    // 可选结束日期 props转移过来
+        curHour: '',
+        curMunit: '',
+        curMis: '',
       }
     },
     watch: {
@@ -230,7 +280,31 @@
       // 给可选日期复制
       this.begin = this.optionalBegin;
       this.end = this.optionalEnd;
+      console.log('开始时间', this.optionalBegin)
       this.init()
+    },
+    computed: {
+      hours(){
+        let arr = [];
+        for (let i = 0; i < 24; i++) {
+          arr.push(i < 10 ? '0' + i : i)
+        }
+        return arr
+      },
+      munit(){
+        let arr = [];
+        for (let i = 0; i < 60; i++) {
+          arr.push(i < 10 ? '0' + i : i)
+        }
+        return arr
+      },
+      mis(){
+        let arr = [];
+        for (let i = 0; i < 60; i++) {
+          arr.push(i < 10 ? '0' + i : i)
+        }
+        return arr
+      },
     },
     methods: {
       init(){
@@ -287,7 +361,7 @@
             for (let j = 0; j < firstDayOfMonth; j++) {
               // console.log("第一行",lunarYear,lunarMonth,lunarValue,lunarInfo)
               temp[line].push(Object.assign(
-                { day: k, disabled: true },
+                {day: k, disabled: true},
                 this.getLunarInfo(this.computedPrevYear(), this.computedPrevMonth(true), k),
                 this.getEvents(this.computedPrevYear(), this.computedPrevMonth(true), k),
               ))
@@ -299,7 +373,7 @@
           if (this.range) { // 范围
             // console.log("日期范围",this.getLunarInfo(this.year,this.month+1,i))
             let options = Object.assign(
-              { day: i },
+              {day: i},
               this.getLunarInfo(this.year, this.month + 1, i),
               this.getEvents(this.year, this.month + 1, i),
             )
@@ -370,7 +444,7 @@
             if (parseInt(seletSplit[0]) == this.year && parseInt(seletSplit[1]) - 1 == this.month && parseInt(seletSplit[2]) == i) {
               // console.log("匹配上次选中的日期",lunarYear,lunarMonth,lunarValue,lunarInfo)
               temp[line].push(Object.assign(
-                { day: i, selected: true },
+                {day: i, selected: true},
                 this.getLunarInfo(this.year, this.month + 1, i),
                 this.getEvents(this.year, this.month + 1, i),
               ))
@@ -381,7 +455,7 @@
 
               // console.log("今天",lunarYear,lunarMonth,lunarValue,lunarInfo)
               temp[line].push(Object.assign(
-                { day: i, selected: true },
+                {day: i, selected: true},
                 this.getLunarInfo(this.year, this.month + 1, i),
                 this.getEvents(this.year, this.month + 1, i),
               ))
@@ -390,7 +464,7 @@
               // 普通日期
               // console.log("设置可选范围",i,lunarYear,lunarMonth,lunarValue,lunarInfo)
               let options = Object.assign(
-                { day: i, selected: false },
+                {day: i, selected: false},
                 this.getLunarInfo(this.year, this.month + 1, i),
                 this.getEvents(this.year, this.month + 1, i),
               )
@@ -421,7 +495,7 @@
             for (let d = day; d < 6; d++) {
               // console.log(this.computedNextYear()+"-"+this.computedNextMonth(true)+"-"+k)
               temp[line].push(Object.assign(
-                { day: k, disabled: true },
+                {day: k, disabled: true},
                 this.getLunarInfo(this.computedNextYear(), this.computedNextMonth(true), k),
                 this.getEvents(this.computedNextYear(), this.computedNextMonth(true), k),
               ))
@@ -441,7 +515,7 @@
             let start = nextMonthPushDays + (i - line - 1) * 7
             for (let d = start; d <= start + 6; d++) {
               temp[i].push(Object.assign(
-                { day: d, disabled: true },
+                {day: d, disabled: true},
                 this.getLunarInfo(this.computedNextYear(), this.computedNextMonth(true), d),
                 this.getEvents(this.computedNextYear(), this.computedNextMonth(true), d),
               ))
@@ -558,7 +632,6 @@
             this.rangeEndTemp = 0;
 
             // 可选月份控制
-            debugger
             if (this.optionalMonth && typeof this.optionalMonth === 'number'
               && this.optionalMonth % 1 === 0 && this.optionalMonth <= 12) {
               let _date = JSON.stringify([this.rangeBegin[0], this.rangeBegin[1] + 1, this.rangeBegin[2]])
@@ -566,8 +639,8 @@
               this.end = this.afterDateByMonth(JSON.parse(_date), this.optionalMonth)
               // 验证结束时间不能大于当天时间
               let _now = new Date();
-              if((new Date(this.end.join('/'))).valueOf()> _now.valueOf()){
-                this.end = [_now.getFullYear(), _now.getMonth()+1, _now.getDate()]
+              if ((new Date(this.end.join('/'))).valueOf() > _now.valueOf()) {
+                this.end = [_now.getFullYear(), _now.getMonth() + 1, _now.getDate()]
               }
 //              console.log(this.begin, this.end)
             }
@@ -635,11 +708,19 @@
           this.days[k1][k2].selected = true
           this.day = this.days[k1][k2].day
           this.today = [k1, k2]
-          this.$emit('select', [this.year, this.zero ? this.zeroPad(this.month + 1) : this.month + 1, this.zero ? this.zeroPad(this.days[k1][k2].day) : this.days[k1][k2].day])
-
-          // 关闭弹层，存在确定按钮的话手动关闭 cwj
-          if (!this.showBottomBtn) {
-            this.hideCalendar();
+          if (this.showTime) {
+            this.$emit("initDate", [this.year, this.month + 1, this.day])
+            this.isOpenTime = true;
+            //默认进来可以看到9:00
+            this.$nextTick(function () {
+              document.getElementById('timeHours').scrollTop = 280;
+            })
+          } else {
+            this.$emit('select', [this.year, this.zero ? this.zeroPad(this.month + 1) : this.month + 1, this.zero ? this.zeroPad(this.days[k1][k2].day) : this.days[k1][k2].day])
+            // 关闭弹层，存在确定按钮的话手动关闭 cwj
+            if (!this.showBottomBtn) {
+              this.hideCalendar();
+            }
           }
         }
       },
@@ -654,10 +735,10 @@
         this.rangeBegin = [];
         this.rangeEnd = [];
         // 重置日期可选范围
-        this.begin = [];
-        if(this.end.length!==0){
+        this.begin = this.optionalBegin;
+        if (this.end.length !== 0) {
           let _now = new Date();
-          this.end = [_now.getFullYear(), _now.getMonth()+1, _now.getDate()]
+          this.end = [_now.getFullYear(), _now.getMonth() + 1, _now.getDate()]
         }
         this.render(this.year, this.month)
       },
@@ -696,6 +777,7 @@
       // 关闭日期
       hideCalendar(){
         this.show = false;
+        this.isOpenTime = false;
       },
       changeYear(){
         if (this.yearsShow) {
@@ -756,6 +838,27 @@
           curDate[0]++;
         }
         return curDate;
+      },
+      //选择时间
+      selectTime(type, item){
+        if (type == 1) {//时
+          this.curHour = item;
+        } else if (type == 2) {//分
+          this.curMunit = item;
+        } else {//秒
+          this.curMis = item;
+        }
+      },
+      //确认选择时间
+      confirmTime(){
+        this.$emit('selectTime', {
+          date: [this.year, this.month < 10 ? '0' + (this.month + 1) : (this.month + 1), this.day < 10 ? '0' + this.day : this.day],
+          time: [this.curHour || '00', this.curMunit || '00']
+        })
+        // 关闭弹层，存在确定按钮的话手动关闭 cwj
+        if (!this.showBottomBtn) {
+          this.hideCalendar();
+        }
       }
     }
   }
@@ -770,7 +873,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    z-index: 99;
+    z-index: 99999;
   }
 
   .calendar-dialog-mask {
@@ -785,7 +888,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    padding: 20px;
+    padding: 5px;
     border: 1px solid #eee;
     border-radius: 2px;
     z-index: 2;
@@ -803,6 +906,7 @@
     -webkit-box-sizing: border-box;
     border-radius: 50%;
     border: 1px solid #fff;
+    z-index: 5;
   }
 
   .calendar td.disabled {
@@ -893,7 +997,7 @@
     margin: 2px !important;
     padding: 0px 0;
     width: 14.28571429%;
-    height: 44px;
+    height: 35px;
     text-align: center;
     vertical-align: middle;
     font-size: 14px;
@@ -1069,5 +1173,95 @@
   .footer-btn .clear {
     background-color: #fff;
     color: #3885ba;
+  }
+
+  /*时间样式*/
+  .time-content {
+    width: 100%;
+    height: 240px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #fff;
+    margin-top: 40px;
+  }
+
+  .time-item {
+    height: 100%;
+    overflow: auto;
+    width: 33.333%;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .time-item div div {
+    text-align: center;
+    line-height: 40px;
+    font-size: 14px;
+    height: 40px;
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box;
+    margin: 0 10px;
+  }
+
+  .time-item div div:hover {
+    background: #eee;
+  }
+
+  .time-item::-webkit-scrollbar {
+    display: none;
+  }
+
+  .time-btn {
+    height: 48px;
+    line-height: 48px;
+    background: #fff;
+    box-sizing: border-box;
+    margin-top: 240px;
+    border-top: 0;
+  }
+
+  .calendar-time {
+    height: 328px;
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    border: 1px solid #eee;
+  }
+
+  .time-btn .time-cancle, .time-sure {
+    width: 60px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .time-sure {
+    color: #1772b1;
+  }
+
+  .select-time {
+    color: #1772b1;
+    font-weight: bold;
+  }
+
+  .dis-flex {
+    display: flex;
+  }
+
+  .justify-content-center {
+    justify-content: center;
+  }
+
+  .height-40 {
+    height: 40px;
+  }
+
+  .line-height-40 {
+    line-height: 40px;
+  }
+
+  .float-right {
+    float: right;
   }
 </style>
